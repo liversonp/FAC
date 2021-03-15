@@ -3,12 +3,13 @@
 .data
     cbn: .asciiz "\n"
     overflow: .asciiz "overflow"
-    sla: .asciiz "to continuando no caso 0\n"
+
 .text
 main:
     li $v0, 5       #lendo o inteiro i
     syscall
     move $t4, $v0   #passando i para t4
+    
     li $v0, 5       #lendo a variável a
     syscall
     move $t1, $v0   #passando a para t1
@@ -19,31 +20,30 @@ main:
 
     bne $t4, $zero, caso_1      #vai para o caso em que i é 1
 
-    li $v0, 4
-    la $a0, sla
-    syscall
-
     nor $t3, $t1, $zero             #faz o nor de a e $zero
     sltu $t3, $t3, $t2              #compara se o valor de 2^32-a é menor que b
     bne $t3, $zero, tem_overflow    #caso sim manda printar overflow
 
-    addu $a0, $t1, $t2   #caso contrário printa a soma
-    li $v0, 1
-    syscall
+    j sem_overflow
 
     j exit  #vai para o final do código
 
     caso_1:
         addu $t0, $t1, $t2  #iniciando o processo para saber se há overflow
-        xor $t3, $t0, $t1   #realizando o xor entre t0 e t1 e passando pra t3
+        xor $t3, $t1, $t2
         slt $t3, $t3, $zero #caso aqui seja diferente de 0, houve overflow
-        bne $t3, $zero, tem_overflow    #se houver, já mostro que há overflow
- 
-        move $a0, $t0   #caso não haja, o programa segue funcionando normalmente
+        bne $t3, $zero, sem_overflow
+
+        xor $t3, $t0, $t1
+        slt $t3, $t3, $zero
+        bne $t3, $zero, tem_overflow  
+    
+    sem_overflow:
+        addu $a0, $t1, $t2
         li $v0, 1
         syscall
-        j exit          #pulando para o final do programa.
-    
+        j exit
+
     tem_overflow:
         li $v0, 4           #vou printar que há overflow
         la $a0, overflow
