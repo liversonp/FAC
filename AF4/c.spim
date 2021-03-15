@@ -1,0 +1,23 @@
+.data
+    linha: .asciiz "\n"
+
+.text
+main:
+    li $v0, 5 #lendo o primeiro inteiro
+    syscall
+    move $t0, $v0 #movendo a variável para $t0
+
+    li $v0, 5 #lendo o segundo inteiro
+    syscall
+    move $t1, $v0 #movendo a variável para $t1
+
+    sub $a0, $t0, $t1 #fazendo a subtração
+    li $v0, 1 #printando a subtração
+    syscall
+
+    li $v0, 4 #indicando print de string
+    la $a0, linha #printando o \n
+    syscall
+
+    li $v0, 10 #encerrando o programa
+    syscall

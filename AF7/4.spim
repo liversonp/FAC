@@ -1,0 +1,34 @@
+.data
+	str: .space 20
+	cbn: .asciiz "\n"
+	
+.text
+
+main:
+	move $t0, $zero	#setando t0 a 0, ele vai ser o i
+
+	li $v0, 8	#chamando a função de ler string
+	la $a0, str	#lendo a string
+	li $a1, 20	#definindo o tamanho da string
+	syscall
+
+	move $t1, $a0   #movendo a string pra t1
+
+	L1:
+        add $t2, $t0, $t1   #endereço de str[i]
+        lbu $t3, 0($t2)     #pegando str[i] e passando para t3
+        beq $t3, $zero, L2  #mando ir para L2 caso t3 seja \0
+        
+        li $v0, 11          #tentando printar
+        move $a0, $t3       #Passando esse endereço para a1
+        syscall
+
+        addi $t0, $t0, 1    #i++;        
+        li $v0, 4   #printo "\n"
+	    la $a0, cbn
+	    syscall
+        j L1
+
+	L2:
+        li $v0, 10  #finalizo o programa
+	    syscall

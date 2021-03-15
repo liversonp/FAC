@@ -1,0 +1,36 @@
+.data
+    cbn: .asciiz "\n"
+
+.text
+main:
+    li $v0, 5 #lendo inteiro
+    syscall
+    move $t0, $v0 #passando para $t0
+
+    move $t1, $zero #setando $t1 para 0
+
+    move $t2, $zero #declanrando a variavel auxiliar i = 0
+
+    Loop: #declarando o loop
+
+        li $v0, 5 #lendo o inteiro referente a valor
+        syscall
+        move $t3, $v0 #passando para $t2
+    
+        add $t1, $t1, $t3 #somando valor ao resultado
+
+        addi $t2, $t2, 1 #i++;
+
+        slt $t4, $t2, $t0 #vendo se i < n
+        bne $t4, $zero, Loop #mandando voltar ao loop
+
+    move $a0, $t1 #passando o resultado para $a0 e printando
+    li $v0, 1
+    syscall
+
+    li $v0, 4 #printando \n
+    la $a0, cbn
+    syscall
+
+    li $v0, 10 #finalizando o programa
+    syscall

@@ -1,0 +1,13 @@
+#comando para rodar:
+#spim -f nome.spim
+.data
+    msg: .asciiz "Ola Mundo\n"
+
+.text
+main:
+    li $v0, 4 # li = load imediate
+    la $a0, msg #la = load adress
+    syscall
+
+    li $v0, 10
+    syscall

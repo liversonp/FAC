@@ -1,0 +1,36 @@
+.data
+    cbn: .asciiz "\n"
+
+.text
+main:
+    li $v0, 5 #lendo um inteiro
+    syscall
+    move $t0, $v0 #passando para $t0
+
+    li $v0, 5 #lendo um inteiro
+    syscall
+    move $t1, $v0 #passando para $t1
+
+    bne	$t0, $t1, ElseIf	# if $t0 != $t1 then target
+    add $a0, $t0, $t1 #se $t0 = $t1 somo os 2
+    j Exit
+
+    ElseIf:
+        slt $t2, $t0, $t1 #comparando se $t0 é menor que $t1 e passando pra $t2
+        bne $t2, $zero, Else #caso seja menor mando para o else
+        sub $a0, $t0, $t1 #caso $t0 > $t1 subtraio $t0 por $t1
+        j Exit
+
+    Else:
+        sub $a0, $t1, $t0 #caso $t0 < $t1 subtraio $t1 por $t0
+
+    Exit:
+        li $v0, 1 #printo o valor final
+        syscall
+
+        li $v0, 4 #quebro a linha
+        la $a0, cbn
+        syscall
+
+        li $v0 10 #finalizo o programa
+        syscall
