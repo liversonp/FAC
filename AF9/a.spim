@@ -1,5 +1,8 @@
 #comando para rodar:
 #spim -f nome.spim
+#Verifica se há overflow
+#entradas: um numero entre 0 e 1, em que 0 é unsigned e 1 é signed e 2 valores, a e b
+#que serão os números que o programa deve informar se darão overflow ou não.
 .data
     cbn: .asciiz "\n"
     overflow: .asciiz "overflow"
@@ -9,7 +12,7 @@ main:
     li $v0, 5       #lendo o inteiro i
     syscall
     move $t4, $v0   #passando i para t4
-    
+
     li $v0, 5       #lendo a variável a
     syscall
     move $t1, $v0   #passando a para t1
@@ -29,14 +32,15 @@ main:
     j exit  #vai para o final do código
 
     caso_1:
-        addu $t0, $t1, $t2  #iniciando o processo para saber se há overflow
-        xor $t3, $t1, $t2
-        slt $t3, $t3, $zero #caso aqui seja diferente de 0, houve overflow
-        bne $t3, $zero, sem_overflow
+        addu $t0, $t1, $t2              #iniciando o processo para saber se há overflow
+        xor $t3, $t1, $t2               #Fazendo o xor para ver se tem sinais iguais
+        slt $t3, $t3, $zero             #caso o sinal seja diferente, o resultado dará < 0
+        bne $t3, $zero, sem_overflow    #quando os sinais são diferentes, não há overflow
 
-        xor $t3, $t0, $t1
-        slt $t3, $t3, $zero
-        bne $t3, $zero, tem_overflow  
+        xor $t3, $t0, $t1               #quando os sinais são iguais, comparamos o sinal de
+                                        #uma das variáveis com a do resultado
+        slt $t3, $t3, $zero             #se o sinal for diferente, teremos um sinal de que
+        bne $t3, $zero, tem_overflow    #houve um overflow e mandamos pro caso.
     
     sem_overflow:
         addu $a0, $t1, $t2
