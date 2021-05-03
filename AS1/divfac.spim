@@ -1,0 +1,77 @@
+divfac:
+    
+    #funcao para verificar se o dividendo eh negativo
+    divdneg:
+    slt $t0, $a0, $zero      #comparando dividendo com 0 e passando pra um t0
+    bne $t0, $zero, c2divd
+
+    #funcao pra verificar se o divisor eh negativo
+    divsneg:
+    slt $t1, $a1, $zero         #comparando o dividendo com 0 e passando pra um t1
+    bne $t1, $zero, c2divs
+    j continue
+
+    c2divd:
+    nor $a0, $a0, $zero         #complemento de 2 do dividendo
+    addi $a0, $a0, 1
+    j divsneg
+
+    c2divs:
+    nor $a1, $a1, $zero         #complemento de 2 do divisor
+    addi $a1, $a1, 1
+
+    continue:
+        addi $t7, $t7, 32
+        move $a2, $zero         #inicializando a parte mais significativa do resto
+        addi $t3, $t3, 1        #inicializando o contador
+
+        loop:
+            slt $t5, $a0, $zero      #comparando dividendo com 0 e passando pra um t5 para nao confundir
+            sll $a2, $a2, 1          #Dando o shift à esquerda da parte mais significativa
+            sll $a0, $a0, 1          #Dando o shift à esquerda da parte menos significativa
+            bne $t5, $zero, maisum
+            j ptdois
+
+            maisum:
+                addi $a2, $a2, 1    #Caso o primeiro numero da parte menos significativa seja negativa soma 1
+            
+            ptdois:
+                sub $a2, $a2, $a1
+                slt $t6, $a2, $zero
+                bne $t6, $zero, menzero
+
+                maizero:
+                    addi $a0, $a0, 1
+                    j defloop
+
+                menzero:
+                    add $a2, $a2, $a1
+                    j defloop
+
+                defloop:
+                    sub $t4, $t7, $t3
+                    addi $t3, $t3, 1
+                    bne $t4, $zero, loop
+                    j exitloop
+    
+    exitloop:
+        bne $t0, $t1, sinaldvd
+        j compres
+    
+    sinaldvd:
+        nor $a0, $a0, $zero
+        addi $a0, $a0, 1
+    
+    compres:
+        bne $t0, $zero, sinalres
+        j exitdv
+
+    sinalres:
+        nor $a2, $a2, $zero
+        addi $a2, $a2, 1
+
+
+    exitdv:
+        mtlo $a0
+        mthi $a2
+        jr $ra
