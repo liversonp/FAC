@@ -1,0 +1,29 @@
+#Algoritmo que compara elementos em um vetor ordenado e retorna quantos
+#elementos diferentes tem dentro do vetor
+elemDistintos:
+
+    addi $t0, $zero, 1   #contador do loop
+    addi $t1, $zero, 1   #contador de numeros diferentes
+    add $t2, $zero, $a0  #colocando em t2 o primeiro item
+    lw $t3, 0($a0)      #carregando para $t3 o primeiro item
+    addi $t4, $t2, 4     #utilizando um auxiliar para saber quanto é i+1
+
+    loop:
+        lw $t3, 0($t2)             #carregando o valor de i
+        lw $t6, 0($t4)             #carregando o valor de i+1
+        slt $t7, $t3, $t6           #Comparando os numeros para saber se sao diferentes
+        bne $t7, $zero, somaum      #Se forem vai somar um ao valor final
+        j defloop
+
+        somaum:
+            addi $t1, $t1, 1
+
+        defloop:
+            addi $t2, $t2, 4
+            addi $t4, $t4, 4
+            addi $t0, $t0, 1 
+            slt $t8, $t0, $a1
+            bne $t8, $zero, loop
+
+    move $v0, $t1
+    jr $ra
